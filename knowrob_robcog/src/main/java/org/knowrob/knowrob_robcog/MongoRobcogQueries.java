@@ -406,7 +406,7 @@ public class MongoRobcogQueries {
 
 		// add the timestamp and the actor name
 		time_and_name.add(new BasicDBObject("timestamp", new BasicDBObject("$lte", timestamp)));
-		time_and_name.add(new BasicDBObject("actors.name", actorName));
+		time_and_name.add(new BasicDBObject("entities.id", actorName));
 
 		// create the pipeline operations, first the $match
 		DBObject match_time_and_name = new BasicDBObject(
@@ -420,17 +420,17 @@ public class MongoRobcogQueries {
 		DBObject limit_result = new BasicDBObject("$limit", 1);
 
 		// $unwind actors in order to output only the queried actor
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("pos", "$actors.pos");
-		proj_fields.put("rot", "$actors.rot");
+		proj_fields.put("pos", "$entities.loc");
+		proj_fields.put("rot", "$entities.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -455,9 +455,9 @@ public class MongoRobcogQueries {
 			cursor.close();
 			// get the pose
 			return new double[] {
-					((BasicDBObject) first_doc.get("pos")).getDouble("x"),
-					((BasicDBObject) first_doc.get("pos")).getDouble("y"),
-					((BasicDBObject) first_doc.get("pos")).getDouble("z"),
+					((BasicDBObject) first_doc.get("loc")).getDouble("x"),
+					((BasicDBObject) first_doc.get("loc")).getDouble("y"),
+					((BasicDBObject) first_doc.get("loc")).getDouble("z"),
 					((BasicDBObject) first_doc.get("rot")).getDouble("x"),
 					((BasicDBObject) first_doc.get("rot")).getDouble("y"),
 					((BasicDBObject) first_doc.get("rot")).getDouble("z"),
@@ -496,17 +496,17 @@ public class MongoRobcogQueries {
 				new BasicDBObject("$gte", start).append("$lte", end)));
 
 		// $unwind the actors
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("pos", "$actors.pos");
-		proj_fields.put("rot", "$actors.rot");
+		proj_fields.put("pos", "$entities.loc");
+		proj_fields.put("rot", "$entities.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -552,9 +552,9 @@ public class MongoRobcogQueries {
 			{			
 				// get the current pose
 				traj_list.add(new double[] {
-						((BasicDBObject) curr_doc.get("pos")).getDouble("x"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("y"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("z"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("x"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("y"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("z"),
 						((BasicDBObject) curr_doc.get("rot")).getDouble("x"),
 						((BasicDBObject) curr_doc.get("rot")).getDouble("y"),
 						((BasicDBObject) curr_doc.get("rot")).getDouble("z"),
@@ -603,13 +603,13 @@ public class MongoRobcogQueries {
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("pos", "$actors.pos");
-		proj_fields.put("rot", "$actors.rot");
+		proj_fields.put("pos", "$entities.loc");
+		proj_fields.put("rot", "$entities.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -651,9 +651,9 @@ public class MongoRobcogQueries {
 			{			
 				// get the current pose
 				traj_list_xyz.add(new double[] {
-						((BasicDBObject) curr_doc.get("pos")).getDouble("x"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("y"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("z")});
+						((BasicDBObject) curr_doc.get("loc")).getDouble("x"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("y"),
+						((BasicDBObject) curr_doc.get(“loc”)).getDouble("z")});
 				prev_ts = curr_ts;
 				//System.out.println(curr_doc.toString());
 			}
@@ -701,7 +701,7 @@ public class MongoRobcogQueries {
 				new BasicDBObject("$gte", start).append("$lte", end)));
 
 		// $unwind the actors
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
@@ -710,8 +710,8 @@ public class MongoRobcogQueries {
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("pos", "$actors.pos");
-		proj_fields.put("rot", "$actors.rot");
+		proj_fields.put("pos", "$entities.loc");
+		proj_fields.put("rot", "$entities.loc");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -753,8 +753,8 @@ public class MongoRobcogQueries {
 			{			
 				// get the current pose
 				traj_list_xy.add(new double[] {
-						((BasicDBObject) curr_doc.get("pos")).getDouble("x"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("y")});
+						((BasicDBObject) curr_doc.get("loc")).getDouble("x"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("y")});
 				prev_ts = curr_ts;
 				//System.out.println(curr_doc.toString());
 			}
@@ -789,7 +789,7 @@ public class MongoRobcogQueries {
 
 		// add the timestamp and the actor name
 		time_and_name.add(new BasicDBObject("timestamp", new BasicDBObject("$lte", timestamp)));
-		time_and_name.add(new BasicDBObject("actors.name", actorName));
+		time_and_name.add(new BasicDBObject("entities.id", actorName));
 
 		// create the pipeline operations, first the $match
 		DBObject match_time_and_name = new BasicDBObject(
@@ -803,11 +803,11 @@ public class MongoRobcogQueries {
 		DBObject limit_result = new BasicDBObject("$limit", 1);
 
 		// $unwind actors in order to output only the queried actor
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("entities.id”, actorName));
 
 		// build the $projection operation
 		DBObject proj_bone_fields = new BasicDBObject("_id", 0);
@@ -817,16 +817,16 @@ public class MongoRobcogQueries {
 
 		
 		// $unwind the bones
-		DBObject unwind_bones = new BasicDBObject("$unwind", "$actors.bones");
+		DBObject unwind_bones = new BasicDBObject("$unwind", "$skel_entities.bones");
 
 		// $match for the given bone name from the unwinded bones
 		DBObject match_bone = new BasicDBObject(
-				"$match", new BasicDBObject("actors.bones.name", boneName));
+				"$match", new BasicDBObject("skel_entities.bones.name", boneName));
 
 		// build the final $projection operation
 		DBObject proj_fields = new BasicDBObject("timestamp", 1);
-		proj_fields.put("pos", "$actors.bones.pos");
-		proj_fields.put("rot", "$actors.bones.rot");
+		proj_fields.put("pos", "$skel_entities.bones.loc");
+		proj_fields.put("rot", "$skel_entities.bones.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -853,9 +853,9 @@ public class MongoRobcogQueries {
 			cursor.close();
 			// get the pose
 			return new double[] {
-					((BasicDBObject) first_doc.get("pos")).getDouble("x"),
-					((BasicDBObject) first_doc.get("pos")).getDouble("y"),
-					((BasicDBObject) first_doc.get("pos")).getDouble("z"),
+					((BasicDBObject) first_doc.get("loc")).getDouble("x"),
+					((BasicDBObject) first_doc.get("loc")).getDouble("y"),
+					((BasicDBObject) first_doc.get("loc")).getDouble("z"),
 					((BasicDBObject) first_doc.get("rot")).getDouble("x"),
 					((BasicDBObject) first_doc.get("rot")).getDouble("y"),
 					((BasicDBObject) first_doc.get("rot")).getDouble("z"),
@@ -897,17 +897,17 @@ public class MongoRobcogQueries {
 				new BasicDBObject("$gte", start).append("$lte", end)));
 
 		// $unwind the actors
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$skel_entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("skel_entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("pos", "$actors.pos");
-		proj_fields.put("rot", "$actors.rot");
+		proj_fields.put("pos", "$skel_entities.loc");
+		proj_fields.put("rot", "$skel_entities.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -953,9 +953,9 @@ public class MongoRobcogQueries {
 			{
 				// get the current pose
 				traj_list.add(new double[] {
-						((BasicDBObject) curr_doc.get("pos")).getDouble("x"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("y"),
-						((BasicDBObject) curr_doc.get("pos")).getDouble("z"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("x"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("y"),
+						((BasicDBObject) curr_doc.get("loc")).getDouble("z"),
 						((BasicDBObject) curr_doc.get("rot")).getDouble("x"),
 						((BasicDBObject) curr_doc.get("rot")).getDouble("y"),
 						((BasicDBObject) curr_doc.get("rot")).getDouble("z"),
@@ -977,21 +977,21 @@ public class MongoRobcogQueries {
 	public String[] GetBonesNames(String actorName){
 		// create the pipeline operations, first the $match
 		DBObject match_name = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName)); 
+				"$match", new BasicDBObject("skel_entities.id", actorName)); 
 
 		// $limit the result to 1
 		DBObject limit_result = new BasicDBObject("$limit", 1);
 
 		// $unwind actors in order to output only the queried actor
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$skel_entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("skel_entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
-		proj_fields.put("bones_names", "$actors.bones.name");
+		proj_fields.put("bones_names", "$skel_entities.bones.name");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -1047,7 +1047,7 @@ public class MongoRobcogQueries {
 
 		// add the timestamp and the actor name
 		time_and_name.add(new BasicDBObject("timestamp", new BasicDBObject("$lte", timestamp)));
-		time_and_name.add(new BasicDBObject("actors.name", actorName));
+		time_and_name.add(new BasicDBObject("skel_entities.id", actorName));
 
 		// create the pipeline operations, first the $match
 		DBObject match_time_and_name = new BasicDBObject(
@@ -1061,17 +1061,17 @@ public class MongoRobcogQueries {
 		DBObject limit_result = new BasicDBObject("$limit", 1);
 
 		// $unwind actors in order to output only the queried actor
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$skel_entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("skel_entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("bones_pos", "$actors.bones.pos");
-		proj_fields.put("bones_rot", "$actors.bones.rot");
+		proj_fields.put("bones_pos", "$skel_entities.bones.loc");
+		proj_fields.put("bones_rot", "$skel_entities.bones.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
@@ -1151,17 +1151,17 @@ public class MongoRobcogQueries {
 				new BasicDBObject("$gte", start).append("$lte", end)));
 
 		// $unwind actors in order to output only the queried actor
-		DBObject unwind_actors = new BasicDBObject("$unwind", "$actors");
+		DBObject unwind_actors = new BasicDBObject("$unwind", "$skel_entities");
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("actors.name", actorName));
+				"$match", new BasicDBObject("skel_entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_fields = new BasicDBObject("_id", 0);
 		proj_fields.put("timestamp", 1);
-		proj_fields.put("bones_pos", "$actors.bones.pos");
-		proj_fields.put("bones_rot", "$actors.bones.rot");
+		proj_fields.put("bones_pos", "$skel_entities.bones.loc");
+		proj_fields.put("bones_rot", "$skel_entities.bones.rot");
 		DBObject project = new BasicDBObject("$project", proj_fields);
 
 		// run aggregation
