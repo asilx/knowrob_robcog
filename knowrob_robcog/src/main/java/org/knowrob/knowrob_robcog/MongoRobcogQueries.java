@@ -653,7 +653,7 @@ public class MongoRobcogQueries {
 				traj_list_xyz.add(new double[] {
 						((BasicDBObject) curr_doc.get("loc")).getDouble("x"),
 						((BasicDBObject) curr_doc.get("loc")).getDouble("y"),
-						((BasicDBObject) curr_doc.get(“loc”)).getDouble("z")});
+						((BasicDBObject) curr_doc.get("loc")).getDouble("z")});
 				prev_ts = curr_ts;
 				//System.out.println(curr_doc.toString());
 			}
@@ -807,7 +807,7 @@ public class MongoRobcogQueries {
 
 		// $match for the given actor name from the unwinded actors
 		DBObject match_actor = new BasicDBObject(
-				"$match", new BasicDBObject("entities.id”, actorName));
+				"$match", new BasicDBObject("entities.id", actorName));
 
 		// build the $projection operation
 		DBObject proj_bone_fields = new BasicDBObject("_id", 0);
